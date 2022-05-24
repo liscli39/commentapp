@@ -15,5 +15,5 @@ services:
     volumes:
       - ".:/app"
     ports:
-      - "10000:8000"
+      - "3000:8000"
     restart: always
