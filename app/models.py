@@ -19,3 +19,10 @@ class Like(models.Model):
 
     def __str__(self):
         return self.image_id + ' - ' + self.device_id
+
+
+class UserCount(models.Model):
+    user_count_id = models.BigAutoField(primary_key=True)
+    app_id = models.CharField(max_length=255)
+    device_id = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)

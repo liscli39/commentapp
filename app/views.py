@@ -1,10 +1,10 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 
-from app.models import Comment, Like
-from app.serializer import CommentSerializer, LikeSerializer
+from django.db.models import Count
+from app.models import Comment, Like, UserCount
+from app.serializer import CommentSerializer, LikeSerializer, UserCountSerializer
 
 
 class CommentView(APIView):
@@ -55,3 +55,19 @@ class LikeView(APIView):
             is_like = likes.filter(device_id=data['device_id']).exists()
 
         return Response({ "count": likes.count(), "is_like": is_like }, status=status.HTTP_200_OK)
+
+
+class CountView(APIView):
+    permission_classes = []
+
+    def post(self, request):
+        serializer = UserCountSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+        return Response(status=status.HTTP_200_OK)
+
+    def get(self, request):
+        count = UserCount.objects.all().values('app_id').annotate(total=Count('device_id'))
+        return Response(count)
