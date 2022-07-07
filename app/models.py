@@ -25,4 +25,5 @@ class UserCount(models.Model):
     user_count_id = models.BigAutoField(primary_key=True)
     app_id = models.CharField(max_length=255)
     device_id = models.CharField(max_length=255)
+    ip_address = models.CharField(max_length=255, null=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)

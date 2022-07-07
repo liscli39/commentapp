@@ -1,3 +1,4 @@
+from ipaddress import ip_address
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -61,7 +62,17 @@ class CountView(APIView):
     permission_classes = []
 
     def post(self, request):
-        serializer = UserCountSerializer(data=request.data)
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+    
+        serializer = UserCountSerializer(data={
+            **request.data,
+            "ip_address": ip,
+        })
+
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
